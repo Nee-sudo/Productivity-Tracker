@@ -3,262 +3,264 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Productivity Dashboard</title>
+<title>Productivity Challenge</title>
 <link rel="icon" href="https://img.icons8.com/?size=80&id=WzwD40yUyIpm&format=png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-
 <style>
-  :root {
-    --bg-color: #0f172a;       /* Deep Navy Blue */
-    --card-bg: #1e293b;       /* Slate Blue */
-    --accent: #7b38f8;        /* Purple */
-    --text-main: #f8fafc;
-    --text-dim: #94a3b8;
-  }
-
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100vh;
-    margin: 0;
-    padding: 20px;
-    background: var(--bg-color);
-    color: var(--text-main);
-    box-sizing: border-box;
-    overflow: hidden;
-  }
-
-  .header {
-    width: 100%;
-    max-width: 1400px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
-  .controls {
-    display: flex;
-    gap: 8px;
-    background: var(--card-bg);
-    padding: 6px;
-    border-radius: 12px;
-    border: 1px solid #334155;
-  }
-
-  button {
-    padding: 10px 18px;
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    color: var(--text-dim);
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    transition: all 0.2s ease;
-  }
-
-  button:hover {
-    color: var(--text-main);
-    background: #334155;
-  }
-
-  button.active {
-    background: var(--accent);
-    color: #fff;
-  }
-
-  .chart-wrapper {
-    width: 100%;
-    max-width: 1600px;
-    flex-grow: 1;
-    background: #f4f4f4; /* Matching the original "Inspirational" background */
-    border-radius: 20px;
-    padding: 25px;
-    border: 1px solid #334155;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    position: relative;
-    box-sizing: border-box;
-  }
-
-  canvas {
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  h1 {
-    font-size: 1.5rem;
-    margin: 0;
-    letter-spacing: -0.5px;
-  }
+  :root { --bg: #080d18; --panel: rgba(19, 29, 48, .72); --line: rgba(154, 176, 211, .16); --text: #f5f8ff; --muted: #91a1bb; --accent: #ffb347; --work: #ff7657; --done: #54e38e; --pending: #62a7ff; --grad1: #17355a; --grad2: #372044; --ring-bg: #17243a; }
+  [data-theme="light"] { --bg: #eef1f8; --panel: rgba(255,255,255,.78); --line: rgba(20,30,60,.12); --text: #101728; --muted: #57647c; --grad1: #cfe0ff; --grad2: #ffe0ec; --ring-bg: #ffffff; }
+  [data-theme="light"] input[type="date"] { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { min-height: 100vh; margin: 0; padding: 28px clamp(16px, 4vw, 56px); color: var(--text); font-family: "Space Grotesk", sans-serif; background: radial-gradient(circle at 15% 0%, var(--grad1) 0, transparent 36%), radial-gradient(circle at 95% 80%, var(--grad2) 0, transparent 35%), var(--bg); transition: background .3s, color .3s; }
+  .shell { max-width: 1480px; margin: auto; }
+  .topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 28px; flex-wrap: wrap; }
+  .eyebrow { color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+  h1 { margin: 5px 0 0; font-size: clamp(28px, 4vw, 46px); line-height: 1; letter-spacing: -.05em; }
+  h1 span { color: var(--accent); }
+  .controls-col { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+  .row { display: flex; gap: 8px; align-items: center; }
+  .glass { background: var(--panel); border: 1px solid var(--line); box-shadow: 0 18px 60px rgba(0, 0, 0, .26), inset 0 1px rgba(255,255,255,.05); backdrop-filter: blur(18px); }
+  .view-switcher { display: flex; gap: 4px; padding: 5px; border-radius: 16px; }
+  .view-switcher button { border: 0; border-radius: 11px; padding: 10px 14px; color: var(--muted); background: transparent; cursor: pointer; font: inherit; font-size: 13px; font-weight: 700; transition: color .25s, background .25s, transform .25s; white-space: nowrap; }
+  .view-switcher button:hover { color: var(--text); transform: translateY(-1px); }
+  .view-switcher button.active { color: #10151d; background: var(--accent); box-shadow: 0 0 22px rgba(255,179,71,.32); }
+  .icon-button { width: 40px; height: 40px; padding: 0; border: 1px solid var(--line); border-radius: 12px; color: var(--text); background: var(--panel); cursor: pointer; font-size: 18px; backdrop-filter: blur(18px); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+  .stat { min-height: 116px; padding: 19px; border-radius: 18px; }
+  .stat-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .1em; }
+  .stat-value { display: block; margin-top: 8px; font-size: 30px; font-weight: 700; }
+  .stat-detail { color: var(--muted); font-size: 12px; }
+  .workspace { min-height: 550px; padding: 22px; border-radius: 24px; }
+  .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 42px; margin-bottom: 16px; flex-wrap: wrap; }
+  .toolbar h2 { margin: 0; font-size: 18px; }
+  .period-summary { display: flex; gap: 10px; color: var(--muted); font-size: 11px; }
+  .period-summary span { padding: 7px 10px; border: 1px solid var(--line); border-radius: 9px; background: rgba(255,255,255,.035); }
+  .period-summary b { color: var(--text); font-size: 14px; margin-left: 4px; }
+  .filters { display: flex; align-items: center; gap: 8px; }
+  .filters label { color: var(--muted); font-size: 12px; }
+  select, input { border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; color: var(--text); background: var(--panel); font: inherit; }
+  input[type="date"] { color-scheme: dark; }
+  .date-nav { display: flex; align-items: center; gap: 6px; }
+  .date-nav .icon-button { width: 34px; height: 34px; font-size: 16px; }
+  .chart-area { height: 460px; position: relative; }
+  .empty, .loading, .error { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: var(--muted); }
+  .empty strong, .error strong { display: block; color: var(--text); font-size: 18px; margin-bottom: 5px; }
+  .progress-wrap { display: flex; align-items: center; gap: 16px; }
+  .ring { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--done) 0deg, var(--done) 0deg, rgba(255,255,255,.1) 0deg); }
+  .ring::after { content: attr(data-value); display: grid; place-items: center; width: 39px; height: 39px; border-radius: 50%; background: var(--ring-bg); font-size: 11px; font-weight: 700; color: var(--text); }
+  .hidden { display: none !important; }
+  .fade-in { animation: rise .45s ease both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 850px) { .topbar { display: block; } .controls-col { align-items: flex-start; margin-top: 20px; } .view-switcher { overflow-x: auto; } .stats { grid-template-columns: repeat(2, 1fr); } .toolbar { align-items: flex-start; flex-direction: column; } .filters { flex-wrap: wrap; } }
+  @media (max-width: 520px) { body { padding: 20px 12px; } .workspace { padding: 14px; } .stats { gap: 9px; } .stat { min-height: 100px; padding: 14px; } .stat-value { font-size: 24px; } .chart-area { height: 350px; } .filters { width: 100%; } select, input { flex: 1; min-width: 0; } }
 </style>
 </head>
-
 <body>
-
-<div class="header">
-  <h1>Productivity <span style="color: var(--accent)">Challenge</span></h1>
-  <div class="controls">
-    <button onclick="updateView('daily', this)">Daily</button>
-    <button onclick="updateView('weekly', this)">Weekly</button>
-    <button onclick="updateView('monthly', this)">Monthly</button>
-    <button onclick="updateView('yearly', this)">Yearly</button>
-    <button onclick="updateView('lifetime', this)" class="active">Lifetime</button>
-  </div>
-</div>
-
-<div class="chart-wrapper">
-  <canvas id="heartbeatChart"></canvas>
-</div>
-
+<main class="shell">
+  <header class="topbar">
+    <div><div class="eyebrow">Focus / consistency / momentum</div><h1>Productivity <span>Challenge</span></h1></div>
+    <div class="controls-col">
+      <div class="row">
+        <button id="themeToggle" class="icon-button" aria-label="Toggle theme" title="Toggle light / dark theme">🌙</button>
+        <nav class="view-switcher glass" id="styleSwitcher" aria-label="Chart style">
+          <button data-style="classic">🕰 Classic</button>
+          <button data-style="dynamic">⚡ Dynamic</button>
+        </nav>
+      </div>
+      <nav class="view-switcher glass" id="viewSwitcher" aria-label="Time range">
+        <button data-view="daily">◷ Daily</button><button data-view="monthly">▦ Monthly</button><button data-view="yearly">◫ Yearly</button><button data-view="lifetime">◉ Lifetime</button>
+      </nav>
+    </div>
+  </header>
+  <section class="stats">
+    <article class="stat glass"><span class="stat-label">Total tasks</span><strong class="stat-value" id="totalStat">0</strong><span class="stat-detail" id="totalDetail">work items logged</span></article>
+    <article class="stat glass"><span class="stat-label">Completion rate</span><div class="progress-wrap"><div class="ring" id="rateRing" data-value="0%"></div><strong class="stat-value" id="rateStat">0%</strong></div></article>
+    <article class="stat glass"><span class="stat-label">Current streak</span><strong class="stat-value" id="streakStat">0 days</strong><span class="stat-detail">consecutive active days (all-time)</span></article>
+    <article class="stat glass"><span class="stat-label">Pending</span><strong class="stat-value" id="pendingStat">0</strong><span class="stat-detail" id="pendingDetail">items to carry forward</span></article>
+  </section>
+  <section class="workspace glass">
+    <div class="toolbar">
+      <h2 id="chartTitle">All-time overview</h2>
+      <div id="periodSummary" class="period-summary hidden">
+        <span>Work <b id="pWork">0</b></span><span>Done <b id="pDone">0</b></span><span>Pending <b id="pPending">0</b></span>
+      </div>
+      <div id="filters" class="filters hidden"></div>
+    </div>
+    <div class="chart-area"><canvas id="heartbeatChart"></canvas><div id="status" class="loading">Loading your productivity data...</div></div>
+  </section>
+</main>
 <script>
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/1ocnFi7S8d2a_HEv-3qXASBY9lUFcCqV6I0Z5-BY3JMY/gviz/tq?tqx=out:csv";
-
-let fullData = {};
-let chart;
-let progress = 0;
-let animationFrameId;
-
-async function loadSheetData(){
-  const res = await fetch(SHEET_URL);
-  const text = await res.text();
-  const rows = text.trim().split("\n").slice(1);
-  const labels=[], work=[], completed=[], pending=[];
-
-  rows.forEach(row=>{
-    const cols = row.split(",").map(v => v.replace(/"/g,"").trim());
-    labels.push(cols[0]);
-    work.push(Number(cols[1]));
-    completed.push(Number(cols[2]));
-    pending.push(Number(cols[3]));
-  });
-  return {labels, work, completed, pending};
-}
-
-// Same reveal plugin from original code
-const revealPlugin = {
-  id:'reveal',
-  beforeDatasetDraw(chart,args){
-    const {ctx, chartArea:{left,right,top,bottom}} = chart;
-    const prog = chart._revealProgress || 0;
-    if(args.meta.type === "line"){
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(left, top, (right-left)*prog, bottom-top);
-      ctx.clip();
-    }
-  },
-  afterDatasetDraw(chart,args){
-    if(args.meta.type === "line"){
-      chart.ctx.restore();
-    }
-  }
+const colorPalettes = {
+  classic: { work: "#ff7657", completed: "#54e38e", pending: "#62a7ff" },
+  dynamic: { work: "#4c8dff", completed: "#ff5c7a", pending: "#ffb347" }
 };
 
-function animate() {
-  progress += 0.002; // Matching speed closer to original
-  if (progress <= 1) {
-    chart._revealProgress = progress;
-    chart.update();
-    animationFrameId = requestAnimationFrame(animate);
-  }
-}
+let fullData = [], chart, progress = 1, animationFrameId;
+let chartStyle = localStorage.getItem("productivity-chart-style") || "dynamic"; // 'classic' (old moving line) | 'dynamic' (bar/line)
+let view = localStorage.getItem("productivity-view") || "lifetime"; // shared: daily | monthly | yearly | lifetime
+let theme = localStorage.getItem("productivity-theme") || "dark";
 
-function updateView(range, btn) {
-  document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+/* ---------- parsing helpers ---------- */
+function csvRows(text) { return text.trim().split(/\r?\n/).slice(1).map(line => { const cells = []; let cell = "", quoted = false; for (const char of line) { if (char === '"') quoted = !quoted; else if (char === "," && !quoted) { cells.push(cell.trim()); cell = ""; } else cell += char; } cells.push(cell.trim()); return cells; }); }
+function parseDate(value) { const text = String(value || "").replace(/^"|"$/g, "").trim(); const parts = text.split(/[\/-]/).map(Number); if (parts.length === 3 && parts.every(Number.isFinite)) { const [a,b,c] = parts; const year = a > 31 ? a : c; const month = a > 31 ? b : (b > 12 ? a : b); const day = a > 31 ? c : (b > 12 ? b : a); const result = new Date(year, month - 1, day); if (!Number.isNaN(result.getTime())) return result; } const direct = new Date(text); return Number.isNaN(direct.getTime()) ? null : new Date(direct.getFullYear(), direct.getMonth(), direct.getDate()); }
+function key(date) { return date.getFullYear() + "-" + String(date.getMonth()+1).padStart(2,"0") + "-" + String(date.getDate()).padStart(2,"0"); }
+function number(value) { return Number(String(value || "0").replace(/[^\d.-]/g, "")) || 0; }
+function sum(rows) { return rows.reduce((total, row) => total + row, 0); }
+function fmt(date, options) { return new Intl.DateTimeFormat(undefined, options).format(date); }
+function allRowsBetween(start, end) { return fullData.filter(row => row.date >= start && row.date <= end); }
+function rangeAggregate(start, end, unit) { const groups = new Map(); allRowsBetween(start, end).forEach(row => { const groupDate = unit === "month" ? new Date(row.date.getFullYear(), row.date.getMonth(), 1) : row.date; const id = key(groupDate); if (!groups.has(id)) groups.set(id, { date: groupDate, work: 0, completed: 0, pending: 0 }); const group = groups.get(id); group.work += row.work; group.completed += row.completed; group.pending += row.pending; }); return [...groups.values()].sort((a,b) => a.date - b.date); }
 
-  let sliceCount;
-  switch(range) {
-    case 'daily': sliceCount = 2; break;
-    case 'weekly': sliceCount = 7; break;
-    case 'monthly': sliceCount = 30; break;
-    case 'yearly': sliceCount = 365; break;
-    default: sliceCount = fullData.labels.length;
-  }
+/* ---------- stats + period summary (recomputed for whatever range is on screen) ---------- */
+function computeTotals(rows) { const total = sum(rows.map(r => r.work)), completed = sum(rows.map(r => r.completed)); const rate = total ? Math.round(completed / total * 100) : 0; const pending = Math.max(0, total - completed); return { total, completed, rate, pending }; }
+function animateNumber(element, value, suffix = "") { const end = Number(String(value).replace(/[^\d.-]/g, "")) || 0, started = performance.now(); function tick(now) { const p = Math.min((now - started) / 650, 1); element.textContent = Math.round(end * (1 - Math.pow(1 - p, 3))) + suffix; if (p < 1) requestAnimationFrame(tick); } requestAnimationFrame(tick); }
+function updateStreak() { let streak = 0, cursor = new Date(); cursor.setHours(0,0,0,0); const days = new Set(fullData.filter(r => r.completed > 0).map(r => key(r.date))); while (days.has(key(cursor))) { streak++; cursor.setDate(cursor.getDate() - 1); } document.getElementById("streakStat").textContent = streak + (streak === 1 ? " day" : " days"); }
+function applyStats(rows, detailLabel) { const { total, completed, rate, pending } = computeTotals(rows); animateNumber(document.getElementById("totalStat"), total); animateNumber(document.getElementById("rateStat"), rate, "%"); animateNumber(document.getElementById("pendingStat"), pending); document.getElementById("rateRing").style.background = `conic-gradient(var(--done) ${rate * 3.6}deg, rgba(255,255,255,.1) 0deg)`; document.getElementById("rateRing").dataset.value = rate + "%"; document.getElementById("totalDetail").textContent = detailLabel || "work items logged"; document.getElementById("pendingDetail").textContent = rows.length ? "work − completed · " + detailLabel : "no data in range"; updateStreak(); const summary = document.getElementById("periodSummary"); document.getElementById("pWork").textContent = total; document.getElementById("pDone").textContent = completed; document.getElementById("pPending").textContent = pending; summary.classList.remove("hidden"); }
 
-  chart.data.labels = fullData.labels.slice(-sliceCount);
-  chart.data.datasets[0].data = fullData.work.slice(-sliceCount);
-  chart.data.datasets[1].data = fullData.completed.slice(-sliceCount);
-  chart.data.datasets[2].data = fullData.pending.slice(-sliceCount);
-
-  // Reset animation
-  cancelAnimationFrame(animationFrameId);
-  progress = 0;
-  animate();
-}
-
-loadSheetData().then(data => {
-  fullData = data;
-  const ctx = document.getElementById("heartbeatChart").getContext("2d");
-
-  chart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: data.labels,
-      datasets: [
-        {
-          label: "Number of Work",
-          data: data.work,
-          borderColor: "#FF5733", // Original Red-Orange
-          backgroundColor: "#FF5733",
-          fill: false,
-          tension: 0.3,
-          pointRadius: 5
-        },
-        {
-          label: "Completed",
-          data: data.completed,
-          borderColor: "#33FF57", // Original Green
-          backgroundColor: "#33FF57",
-          fill: false,
-          tension: 0.3,
-          pointRadius: 5
-        },
-        {
-          label: "Pending",
-          data: data.pending,
-          borderColor: "#3357FF", // Original Blue
-          backgroundColor: "#3357FF",
-          fill: false,
-          tension: 0.3,
-          pointRadius: 5
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: false,
-      layout: {
-        padding: {left: 20, right: 20, top: 10, bottom: 10}
-      },
-      plugins: {
-        legend: { position: "top" },
-        title: {
-          display: true,
-          text: "2025 Productivity Challenge",
-          font: { size: 18 }
-        }
-      },
-      scales: {
-        x: { title: { display: true, text: "Date" } },
-        y: {
-          title: { display: true, text: "Task Count" },
-          beginAtZero: true,
-          ticks: { stepSize: 1 }
-        }
-      }
-    },
-    plugins: [revealPlugin]
+/* ---------- chart drawing ---------- */
+const revealPlugin = { id: "reveal", beforeDatasetDraw(c, args) { const { ctx, chartArea: { left, right, top, bottom } } = c; const prog = c._revealProgress ?? 1; if (args.meta.type === "line") { ctx.save(); ctx.beginPath(); ctx.rect(left, top, (right - left) * prog, bottom - top); ctx.clip(); } }, afterDatasetDraw(c, args) { if (args.meta.type === "line") c.ctx.restore(); } };
+function dataset(label) { return { label, data: [] }; }
+function createChart() { const ctx = document.getElementById("heartbeatChart"); chart = new Chart(ctx, { type: "line", data: { labels: [], datasets: [dataset("Number of Work"), dataset("Completed"), dataset("Pending")] }, options: { responsive: true, maintainAspectRatio: false, animation: false, interaction: { mode: "index", intersect: false }, plugins: { legend: { labels: { color: "#9fb0cc", usePointStyle: true, padding: 20 } }, tooltip: { backgroundColor: "#101a2b", titleColor: "#fff", bodyColor: "#dce6f8", borderColor: "rgba(255,255,255,.15)", borderWidth: 1, padding: 12 } }, scales: { x: { grid: { color: "rgba(154,176,211,.08)" }, ticks: { color: "#91a1bb", maxRotation: 0, autoSkip: true, maxTicksLimit: 16 } }, y: { beginAtZero: true, grid: { color: "rgba(154,176,211,.1)" }, ticks: { color: "#91a1bb", precision: 0 } } } }, plugins: [revealPlugin] }); }
+function paintChart(title, labels, rows, type) {
+  document.getElementById("chartTitle").textContent = title;
+  document.getElementById("status").classList.add("hidden");
+  const palette = colorPalettes[chartStyle];
+  const useFill = chartStyle === "dynamic" && type === "line";
+  chart.config.type = type;
+  chart.data.labels = labels;
+  chart.data.datasets.forEach((set, i) => {
+    const prop = ["work","completed","pending"][i];
+    const color = palette[prop];
+    set.data = rows.map(r => r[prop]);
+    set.type = type;
+    set.borderColor = color;
+    set.pointBackgroundColor = color;
+    set.pointBorderColor = chartStyle === "dynamic" ? "#0b1220" : color;
+    set.pointBorderWidth = chartStyle === "dynamic" && type === "line" ? 2 : 0;
+    set.pointRadius = type === "line" ? (chartStyle === "dynamic" ? 4 : 3) : 0;
+    set.pointHoverRadius = type === "line" ? 6 : 0;
+    set.borderWidth = chartStyle === "dynamic" ? 2.5 : 2;
+    set.tension = chartStyle === "dynamic" ? .42 : .35;
+    set.borderRadius = type === "bar" ? 5 : 0;
+    set.fill = useFill;
+    set.backgroundColor = type === "bar" ? color + "cc" : (useFill ? color + "4d" : color);
   });
+  chart.update();
+  document.querySelector(".chart-area").classList.remove("fade-in"); void document.querySelector(".chart-area").offsetWidth; document.querySelector(".chart-area").classList.add("fade-in");
+}
+function animateReveal() { progress += 0.01; if (progress <= 1) { chart._revealProgress = progress; chart.update(); animationFrameId = requestAnimationFrame(animateReveal); } }
+function empty(title) { document.getElementById("chartTitle").textContent = title; chart.data.labels = []; chart.data.datasets.forEach(set => set.data = []); chart.update(); document.getElementById("status").innerHTML = "<div><strong>No data for this period</strong>Try another date or selection.</div>"; document.getElementById("status").className = "empty"; applyStats([], "no data"); }
 
-  animate();
-});
+/* ---------- one shared filter engine for Daily / Monthly / Yearly / Lifetime ---------- */
+function makeFilters() {
+  const box = document.getElementById("filters");
+  box.innerHTML = "";
+  if (view === "daily") {
+    box.innerHTML = '<div class="date-nav"><button class="icon-button" id="previousDay" aria-label="Previous day">‹</button><input type="date" id="datePicker"><button class="icon-button" id="nextDay" aria-label="Next day">›</button></div>';
+    document.getElementById("datePicker").addEventListener("change", render);
+    document.getElementById("previousDay").addEventListener("click", () => shiftDate(-1));
+    document.getElementById("nextDay").addEventListener("click", () => shiftDate(1));
+  } else if (view === "monthly" || view === "yearly") {
+    box.innerHTML = `<label for="periodPicker">${view === "monthly" ? "Month" : "Year"}</label><select id="periodPicker"></select>`;
+    const picker = document.getElementById("periodPicker");
+    if (view === "monthly") {
+      const months = [...new Set(fullData.map(row => `${row.date.getFullYear()}-${String(row.date.getMonth()+1).padStart(2,"0")}`))];
+      picker.innerHTML = months.map(value => `<option value="${value}">${fmt(new Date(value + "-01T00:00:00"), {month:"long", year:"numeric"})}</option>`).join("");
+      picker.value = localStorage.getItem("productivity-month") || months.at(-1) || "";
+    } else {
+      const years = [...new Set(fullData.map(row => row.date.getFullYear()))];
+      picker.innerHTML = years.map(year => `<option>${year}</option>`).join("");
+      picker.value = localStorage.getItem("productivity-year") || years.at(-1) || "";
+    }
+    picker.addEventListener("change", render);
+  }
+  box.classList.toggle("hidden", view === "lifetime");
+}
+function shiftDate(amount) { const picker = document.getElementById("datePicker"), date = new Date(picker.value + "T00:00:00"); date.setDate(date.getDate() + amount); picker.value = key(date); render(); }
+
+function computeView() {
+  const today = fullData.at(-1)?.date || new Date();
+  if (view === "lifetime") {
+    const rows = rangeAggregate(fullData[0]?.date || today, today, "day");
+    return { rows, labels: rows.map(r => fmt(r.date, {month:"short", day:"numeric"})), title: "All-time overview", type: "line", statsRows: rows, detail: "all-time" };
+  }
+  if (view === "daily") {
+    const picker = document.getElementById("datePicker"); if (!picker) return null;
+    const selected = new Date((picker.value || key(today)) + "T00:00:00"); picker.value = key(selected);
+    const dayRows = allRowsBetween(selected, selected);
+    const start = new Date(selected); start.setDate(start.getDate() - 13);
+    const rows = rangeAggregate(start, selected, "day");
+    return { rows: dayRows.length ? rows : [], labels: rows.map(r => fmt(r.date, {month:"short", day:"numeric"})), title: `${fmt(selected, {month:"long", day:"numeric", year:"numeric"})} · 14-day context`, type: "line", statsRows: dayRows, detail: "selected day" };
+  }
+  if (view === "monthly") {
+    const picker = document.getElementById("periodPicker"); if (!picker || !picker.value) return null;
+    const [year, month] = picker.value.split("-").map(Number);
+    const start = new Date(year, month - 1, 1), end = new Date(year, month, 0);
+    const rows = rangeAggregate(start, end, "day");
+    localStorage.setItem("productivity-month", picker.value);
+    return { rows, labels: rows.map(r => r.date.getDate()), title: fmt(start, {month:"long", year:"numeric"}), type: "bar", statsRows: rows, detail: "this month" };
+  }
+  const picker = document.getElementById("periodPicker"); if (!picker || !picker.value) return null;
+  const year = Number(picker.value), start = new Date(year, 0, 1), end = new Date(year, 11, 31);
+  const rows = rangeAggregate(start, end, "month");
+  localStorage.setItem("productivity-year", String(year));
+  return { rows, labels: rows.map(r => fmt(r.date, {month:"short"})), title: `${year} · monthly totals`, type: "bar", statsRows: rows, detail: "this year" };
+}
+
+function render() {
+  localStorage.setItem("productivity-view", view);
+  cancelAnimationFrame(animationFrameId);
+  const data = computeView();
+  if (!data) return; // filters not built yet
+  if (!data.rows.length) return empty(data.title);
+  const type = chartStyle === "classic" ? "line" : data.type; // classic always keeps the moving-line look
+  chart._revealProgress = chartStyle === "classic" ? 0 : 1;
+  paintChart(data.title, data.labels, data.rows, type);
+  applyStats(data.statsRows, data.detail);
+  if (chartStyle === "classic") { progress = 0; animateReveal(); }
+}
+
+/* ---------- data loading ---------- */
+function normalizeRows(rows) { return rows.map(cols => { const date = parseDate(cols[0]?.f || cols[0]?.v || cols[0]); return date ? { date, work: number(cols[1]?.v ?? cols[1]), completed: number(cols[2]?.v ?? cols[2]), pending: number(cols[3]?.v ?? cols[3]) } : null; }).filter(Boolean).sort((a,b) => a.date - b.date); }
+function loadSheetJsonp() { return new Promise((resolve, reject) => { const callback = `sheetCallback${Date.now()}`; const script = document.createElement("script"); const timeout = setTimeout(() => { cleanup(); reject(new Error("Sheet JSONP request timed out")); }, 10000); function cleanup() { clearTimeout(timeout); delete window[callback]; script.remove(); } window[callback] = payload => { cleanup(); if (payload.status !== "ok") reject(new Error("Sheet query failed")); else resolve(normalizeRows(payload.table.rows.map(row => row.c || []))); }; script.onerror = () => { cleanup(); reject(new Error("Sheet JSONP request failed")); }; script.src = `${SHEET_URL.replace("tqx=out:csv", "tqx=out:json")};responseHandler:${callback}`; document.head.appendChild(script); }); }
+async function loadSheetData() { try { const response = await fetch(SHEET_URL); if (!response.ok) throw new Error("Sheet request failed"); return normalizeRows(csvRows(await response.text())); } catch (error) { return loadSheetJsonp(); } }
+
+/* ---------- UI wiring ---------- */
+function applyTheme() { document.documentElement.setAttribute("data-theme", theme); document.getElementById("themeToggle").textContent = theme === "dark" ? "🌙" : "☀️"; }
+document.getElementById("themeToggle").addEventListener("click", () => { theme = theme === "dark" ? "light" : "dark"; localStorage.setItem("productivity-theme", theme); applyTheme(); });
+
+document.querySelectorAll("#styleSwitcher [data-style]").forEach(btn => btn.addEventListener("click", () => {
+  chartStyle = btn.dataset.style; localStorage.setItem("productivity-chart-style", chartStyle);
+  document.querySelectorAll("#styleSwitcher [data-style]").forEach(b => b.classList.toggle("active", b === btn));
+  if (fullData.length) render();
+}));
+document.querySelectorAll("#viewSwitcher [data-view]").forEach(btn => btn.addEventListener("click", () => {
+  view = btn.dataset.view;
+  document.querySelectorAll("#viewSwitcher [data-view]").forEach(b => b.classList.toggle("active", b === btn));
+  makeFilters(); if (fullData.length) render();
+}));
+
+(function initUI() {
+  applyTheme();
+  document.querySelector(`#styleSwitcher [data-style="${chartStyle}"]`)?.classList.add("active");
+  document.querySelector(`#viewSwitcher [data-view="${view}"]`)?.classList.add("active");
+})();
+
+(async function init() {
+  createChart();
+  try {
+    fullData = await loadSheetData();
+    if (!fullData.length) throw new Error("No dated rows found");
+    makeFilters();
+    render();
+  } catch (error) {
+    document.getElementById("status").innerHTML = "<div><strong>Could not load the sheet</strong>Check the CSV URL or your connection, then refresh.</div>";
+    document.getElementById("status").className = "error";
+  }
+})();
 </script>
-
 </body>
 </html>
